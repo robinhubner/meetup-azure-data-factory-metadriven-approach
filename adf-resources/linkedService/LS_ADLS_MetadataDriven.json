@@ -1,0 +1,10 @@
+{
+	"name": "LS_ADLS_MetadataDriven",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://adlsdatafactory001.dfs.core.windows.net/"
+		}
+	}
+}

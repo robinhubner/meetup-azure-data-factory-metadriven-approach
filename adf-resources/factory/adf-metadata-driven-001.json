@@ -1,0 +1,9 @@
+{
+	"name": "adf-metadata-driven-001",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "4c433409-4507-4e07-b80c-251cd37ef2be",
+		"tenantId": "a863af35-969a-41a5-94b6-a00ceac7c312"
+	}
+}

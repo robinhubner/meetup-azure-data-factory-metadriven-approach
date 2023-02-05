@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Lookup whether a job is active",
+				"name": "Lookup data sources with active loads",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -33,7 +33,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Lookup whether a job is active",
+						"activity": "Lookup data sources with active loads",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -42,7 +42,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup whether a job is active').output.DataSourceName.value",
+						"value": "@activity('Lookup data sources with active loads').output.DataSourceName.value",
 						"type": "Expression"
 					},
 					"activities": [
@@ -76,9 +76,6 @@
 			}
 		},
 		"variables": {
-			"DataSourceName": {
-				"type": "String"
-			},
 			"LinkedServiceName": {
 				"type": "String"
 			},

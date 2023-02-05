@@ -38,7 +38,7 @@
 										"type": "Expression"
 									},
 									"LoadBatchGroup": {
-										"value": "@item()",
+										"value": "@item().LoadBatchGroup",
 										"type": "Expression"
 									}
 								}

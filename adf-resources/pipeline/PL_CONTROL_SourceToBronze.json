@@ -1,0 +1,83 @@
+{
+	"name": "PL_CONTROL_SourceToBronze",
+	"properties": {
+		"activities": [
+			{
+				"name": "For Each Data Source",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup Load Batch Groups",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Load Batch Groups').output.LoadBatchGroup.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Execute Copy Source To Bronze Pipeline",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL_COPY_SourceToBronze",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"DataSourceName": {
+										"value": "@pipeline().parameters.DataSourceName",
+										"type": "Expression"
+									},
+									"LoadBatchGroup": {
+										"value": "@item()",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Lookup Load Batch Groups",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT [LoadBatchGroup]\nFROM [ctrl].[SourceToBronze]\nWHERE [IsActive] = 1 \nAND [LoadBatchGroup] = 1\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ASQL_Control",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"DataSourceName": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}

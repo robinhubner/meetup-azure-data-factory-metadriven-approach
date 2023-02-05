@@ -3,12 +3,69 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Execute Pipeline1",
-				"type": "ExecutePipeline",
+				"name": "Lookup whether a job is active",
+				"type": "Lookup",
 				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"waitOnCompletion": true
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT(DataSourceName)\nFROM [ctrl].[SourceToBronze]\nWHERE IsActive = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ASQL_Control",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "For Each Data Source",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup whether a job is active",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup whether a job is active').output.DataSourceName.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Execute Control Pipeline Source To Bronze",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL_CONTROL_SourceToBronze",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"DataSourceName": {
+										"value": "@item()",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
 				}
 			}
 		],
@@ -16,6 +73,29 @@
 			"DataSourceName": {
 				"type": "string",
 				"defaultValue": "adventure-works-001"
+			}
+		},
+		"variables": {
+			"DataSourceName": {
+				"type": "String"
+			},
+			"LinkedServiceName": {
+				"type": "String"
+			},
+			"SourceSchemaName": {
+				"type": "String"
+			},
+			"SourceTableName": {
+				"type": "String"
+			},
+			"SinkFileDirectoryName": {
+				"type": "String"
+			},
+			"SourceQueryDefinition": {
+				"type": "String"
+			},
+			"LoadBatchGroup": {
+				"type": "String"
 			}
 		},
 		"annotations": []

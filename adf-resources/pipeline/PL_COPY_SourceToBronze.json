@@ -5,7 +5,14 @@
 			{
 				"name": "Copy data from source to bronze",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Lookup information for copy job",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -17,7 +24,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "",
+						"sqlReaderQuery": "SELECT 1",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -49,13 +56,50 @@
 				"outputs": [
 					{
 						"referenceName": "DS_ADLS_Parquet",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FileDirectory": "test",
+							"FileContainer": "test",
+							"FileName": {
+								"value": "@{utcNow()}TestFile",
+								"type": "Expression"
+							}
+						}
 					}
 				]
+			},
+			{
+				"name": "Lookup information for copy job",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT(DataSourceName)\nFROM [ctrl].[SourceToBronze]\nWHERE IsActive = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ASQL_Control",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
 			}
 		],
 		"parameters": {
-			"SourceToBronzeQuery": {
+			"DataSourceName": {
+				"type": "string"
+			},
+			"LoadBatchGroup": {
 				"type": "string"
 			}
 		},

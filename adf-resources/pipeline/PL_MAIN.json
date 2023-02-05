@@ -69,12 +69,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"DataSourceName": {
-				"type": "string",
-				"defaultValue": "adventure-works-001"
-			}
-		},
 		"variables": {
 			"LinkedServiceName": {
 				"type": "String"
@@ -92,6 +86,9 @@
 				"type": "String"
 			},
 			"LoadBatchGroup": {
+				"type": "String"
+			},
+			"DataSourceName": {
 				"type": "String"
 			}
 		},

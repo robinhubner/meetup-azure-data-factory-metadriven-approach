@@ -1,0 +1,23 @@
+{
+	"name": "PL_MAIN",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"parameters": {
+			"DataSourceName": {
+				"type": "string",
+				"defaultValue": "adventure-works-001"
+			}
+		},
+		"annotations": []
+	}
+}

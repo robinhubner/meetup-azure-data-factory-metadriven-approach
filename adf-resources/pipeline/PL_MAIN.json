@@ -42,7 +42,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup data sources with active loads').output.value.DataSourceName",
+						"value": "@activity('Lookup data sources with active loads').output.value",
 						"type": "Expression"
 					},
 					"isSequential": false,

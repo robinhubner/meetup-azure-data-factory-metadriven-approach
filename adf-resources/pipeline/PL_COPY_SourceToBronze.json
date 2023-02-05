@@ -101,10 +101,10 @@
 									"referenceName": "DS_ADLS_Parquet",
 									"type": "DatasetReference",
 									"parameters": {
-										"FileDirectory": "MetaDataDrivenIndividualSolution\\",
+										"FileDirectory": "MetaDataDrivenIndividualSolution",
 										"FileContainer": "bronze",
 										"FileName": {
-											"value": "@{utcNow()}TestFile",
+											"value": "@{utcNow()} & item().SourceTableName",
 											"type": "Expression"
 										}
 									}

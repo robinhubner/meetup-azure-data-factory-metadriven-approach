@@ -1,0 +1,12 @@
+{
+	"name": "DS_ASQL_AdventureWorksAll",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ASQL_DynamicSource",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}

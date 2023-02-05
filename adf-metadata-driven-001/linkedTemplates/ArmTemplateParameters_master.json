@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-metadata-driven-001"
+		},
+		"LS_ADLS_MetadataDriven_properties_typeProperties_url": {
+			"value": "https://adlsdatafactory001.dfs.core.windows.net/"
+		},
+		"LS_AKV_MetadataDrivenProject_properties_typeProperties_baseUrl": {
+			"value": "https://kv-metadata-driven-001.vault.azure.net/"
+		},
+		"LS_ASQL_Control_properties_typeProperties_connectionString_secretName": {
+			"value": "control-001"
+		},
+		"LS_ASQL_DynamicSource_properties_typeProperties_connectionString_secretName": {
+			"value": "adventure-works-001"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

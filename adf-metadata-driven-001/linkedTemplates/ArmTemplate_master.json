@@ -1,0 +1,70 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-metadata-driven-001"
+		},
+		"LS_ADLS_MetadataDriven_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlsdatafactory001.dfs.core.windows.net/"
+		},
+		"LS_AKV_MetadataDrivenProject_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-metadata-driven-001.vault.azure.net/"
+		},
+		"LS_ASQL_Control_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "control-001"
+		},
+		"LS_ASQL_DynamicSource_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "adventure-works-001"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adf-metadata-driven-001_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"LS_ADLS_MetadataDriven_properties_typeProperties_url": {
+						"value": "[parameters('LS_ADLS_MetadataDriven_properties_typeProperties_url')]"
+					},
+					"LS_AKV_MetadataDrivenProject_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_AKV_MetadataDrivenProject_properties_typeProperties_baseUrl')]"
+					},
+					"LS_ASQL_Control_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('LS_ASQL_Control_properties_typeProperties_connectionString_secretName')]"
+					},
+					"LS_ASQL_DynamicSource_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('LS_ASQL_DynamicSource_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

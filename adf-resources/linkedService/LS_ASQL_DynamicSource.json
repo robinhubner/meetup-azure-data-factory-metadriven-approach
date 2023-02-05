@@ -1,0 +1,23 @@
+{
+	"name": "LS_ASQL_DynamicSource",
+	"properties": {
+		"parameters": {
+			"DataSource": {
+				"type": "string",
+				"defaultValue": "adventure-works-001"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV_MetadataDrivenProject",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "adventure-works-001"
+			}
+		}
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "LS_ASQL_Control",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV_MetadataDrivenProject",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "control-001"
+			}
+		}
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"name": "LS_AKV_MetadataDrivenProject",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kv-metadata-driven-001.vault.azure.net/"
+		}
+	}
+}

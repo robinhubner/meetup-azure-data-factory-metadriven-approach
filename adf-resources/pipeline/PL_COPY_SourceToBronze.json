@@ -1,0 +1,128 @@
+{
+	"name": "PL_COPY_SourceToBronze",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup information for copy job",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@concat('SELECT [SourceSchemaName],\n[SourceTableName],\n[SinkFileDirectoryName],\n[SourceQueryDefinition]\nFROM [ctrl].[SourceToBronze]\nWHERE [IsActive] = 1\nAND [DataSourceName] = ','''',pipeline().parameters.DataSourceName,'''', ' AND LoadBatchGroup = ',pipeline().parameters.LoadBatchGroup)",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ASQL_Control",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "For each table to load",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup information for copy job",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup information for copy job').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data from source to bronze_copy1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@item().SourceQueryDefinition",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_ASQL_AdventureWorksAll",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_ADLS_Parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileDirectory": "MetaDataDrivenIndividualSolution",
+										"FileContainer": "bronze",
+										"FileName": {
+											"value": "@{utcNow()} & item().SourceTableName",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"DataSourceName": {
+				"type": "string"
+			},
+			"LoadBatchGroup": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}

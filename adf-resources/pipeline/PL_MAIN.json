@@ -1,0 +1,98 @@
+{
+	"name": "PL_MAIN",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup data sources with active loads",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT(DataSourceName)\nFROM [ctrl].[SourceToBronze]\nWHERE IsActive = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ASQL_Control",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "For Each Data Source",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup data sources with active loads",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup data sources with active loads').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Execute Control Pipeline Source To Bronze",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL_CONTROL_SourceToBronze",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"DataSourceName": {
+										"value": "@item()",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"LinkedServiceName": {
+				"type": "String"
+			},
+			"SourceSchemaName": {
+				"type": "String"
+			},
+			"SourceTableName": {
+				"type": "String"
+			},
+			"SinkFileDirectoryName": {
+				"type": "String"
+			},
+			"SourceQueryDefinition": {
+				"type": "String"
+			},
+			"LoadBatchGroup": {
+				"type": "String"
+			},
+			"DataSourceName": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

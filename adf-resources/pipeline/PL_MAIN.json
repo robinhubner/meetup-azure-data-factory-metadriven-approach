@@ -42,9 +42,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup data sources with active loads').output.DataSourceName.value",
+						"value": "@activity('Lookup data sources with active loads').output.value.DataSourceName",
 						"type": "Expression"
 					},
+					"isSequential": false,
 					"activities": [
 						{
 							"name": "Execute Control Pipeline Source To Bronze",

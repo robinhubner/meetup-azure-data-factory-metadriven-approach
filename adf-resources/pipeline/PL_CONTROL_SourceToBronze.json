@@ -16,9 +16,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup Load Batch Groups').output.LoadBatchGroup.value",
+						"value": "@activity('Lookup Load Batch Groups').output.value.LoadBatchGroup",
 						"type": "Expression"
 					},
+					"isSequential": false,
 					"activities": [
 						{
 							"name": "Execute Copy Source To Bronze Pipeline",

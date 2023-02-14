@@ -60,7 +60,7 @@
 								"waitOnCompletion": true,
 								"parameters": {
 									"DataSourceName": {
-										"value": "@item()",
+										"value": "@item().DataSourceName",
 										"type": "Expression"
 									}
 								}

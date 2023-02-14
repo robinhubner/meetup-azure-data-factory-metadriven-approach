@@ -1,5 +1,5 @@
 {
-	"name": "PL_CONTROL_SourceToBronze",
+	"name": "02 PL_CONTROL_SourceToBronze",
 	"properties": {
 		"activities": [
 			{
@@ -28,7 +28,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "PL_COPY_SourceToBronze",
+									"referenceName": "03 PL_COPY_SourceToBronze",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -63,7 +63,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@concat('SELECT DISTINCT [LoadBatchGroup]\nFROM [ctrl].[SourceToBronze]\nWHERE [IsActive] = 1 \nAND [LoadBatchGroup] = 1\nAND [DataSourceName] = ','''',pipeline().parameters.DataSourceName,'''')",
+							"value": "@concat('SELECT DISTINCT [LoadBatchGroup] FROM [ctrl].[SourceToBronze] WHERE [IsActive] = 1 AND [LoadBatchGroup] = 1 AND [DataSourceName] = ','''',pipeline().parameters.DataSourceName,'''')",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -81,6 +81,9 @@
 			"DataSourceName": {
 				"type": "string"
 			}
+		},
+		"folder": {
+			"name": "01 Individual Solution"
 		},
 		"annotations": []
 	}

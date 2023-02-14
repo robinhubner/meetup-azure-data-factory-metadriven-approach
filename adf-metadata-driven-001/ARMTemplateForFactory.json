@@ -29,7 +29,119 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_CONTROL_SourceToBronze')]",
+			"name": "[concat(parameters('factoryName'), '/01 PL_MAIN')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup data sources with active loads",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT DISTINCT(DataSourceName)\nFROM [ctrl].[SourceToBronze]\nWHERE IsActive = 1",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_ASQL_Control",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "For Each Data Source",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup data sources with active loads",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup data sources with active loads').output.value",
+								"type": "Expression"
+							},
+							"isSequential": false,
+							"activities": [
+								{
+									"name": "Execute Control Pipeline Source To Bronze",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "02 PL_CONTROL_SourceToBronze",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"DataSourceName": {
+												"value": "@item()",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"LinkedServiceName": {
+						"type": "String"
+					},
+					"SourceSchemaName": {
+						"type": "String"
+					},
+					"SourceTableName": {
+						"type": "String"
+					},
+					"SinkFileDirectoryName": {
+						"type": "String"
+					},
+					"SourceQueryDefinition": {
+						"type": "String"
+					},
+					"LoadBatchGroup": {
+						"type": "String"
+					},
+					"DataSourceName": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "01 Individual Solution"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_ASQL_Control')]",
+				"[concat(variables('factoryId'), '/pipelines/02 PL_CONTROL_SourceToBronze')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/02 PL_CONTROL_SourceToBronze')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -60,7 +172,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
-											"referenceName": "PL_COPY_SourceToBronze",
+											"referenceName": "03 PL_COPY_SourceToBronze",
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
@@ -95,7 +207,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "@concat('SELECT DISTINCT [LoadBatchGroup]\nFROM [ctrl].[SourceToBronze]\nWHERE [IsActive] = 1 \nAND [LoadBatchGroup] = 1\nAND [DataSourceName] = ','''',pipeline().parameters.DataSourceName,'''')",
+									"value": "@concat('SELECT DISTINCT [LoadBatchGroup] FROM [ctrl].[SourceToBronze] WHERE [IsActive] = 1 AND [LoadBatchGroup] = 1 AND [DataSourceName] = ','''',pipeline().parameters.DataSourceName,'''')",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",
@@ -119,15 +231,18 @@
 						"type": "string"
 					}
 				},
+				"folder": {
+					"name": "01 Individual Solution"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ASQL_Control')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_COPY_SourceToBronze')]"
+				"[concat(variables('factoryId'), '/pipelines/03 PL_COPY_SourceToBronze')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_COPY_SourceToBronze')]",
+			"name": "[concat(parameters('factoryName'), '/03 PL_COPY_SourceToBronze')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -259,121 +374,15 @@
 						"type": "string"
 					}
 				},
+				"folder": {
+					"name": "01 Individual Solution"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ASQL_Control')]",
 				"[concat(variables('factoryId'), '/datasets/DS_ASQL_AdventureWorksAll')]",
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_Parquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_MAIN')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Lookup data sources with active loads",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT DISTINCT(DataSourceName)\nFROM [ctrl].[SourceToBronze]\nWHERE IsActive = 1",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "DS_ASQL_Control",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "For Each Data Source",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Lookup data sources with active loads",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Lookup data sources with active loads').output.value",
-								"type": "Expression"
-							},
-							"isSequential": false,
-							"activities": [
-								{
-									"name": "Execute Control Pipeline Source To Bronze",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "PL_CONTROL_SourceToBronze",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"DataSourceName": {
-												"value": "@item()",
-												"type": "Expression"
-											}
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"LinkedServiceName": {
-						"type": "String"
-					},
-					"SourceSchemaName": {
-						"type": "String"
-					},
-					"SourceTableName": {
-						"type": "String"
-					},
-					"SinkFileDirectoryName": {
-						"type": "String"
-					},
-					"SourceQueryDefinition": {
-						"type": "String"
-					},
-					"LoadBatchGroup": {
-						"type": "String"
-					},
-					"DataSourceName": {
-						"type": "String"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_ASQL_Control')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_CONTROL_SourceToBronze')]"
 			]
 		},
 		{
@@ -395,6 +404,9 @@
 					"FileName": {
 						"type": "string"
 					}
+				},
+				"folder": {
+					"name": "01 Individual Solution"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -431,6 +443,9 @@
 					"referenceName": "LS_ASQL_DynamicSource",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "01 Individual Solution"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
@@ -448,6 +463,9 @@
 				"linkedServiceName": {
 					"referenceName": "LS_ASQL_Control",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "01 Individual Solution"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",

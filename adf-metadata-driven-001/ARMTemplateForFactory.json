@@ -93,7 +93,7 @@
 										"waitOnCompletion": true,
 										"parameters": {
 											"DataSourceName": {
-												"value": "@item()",
+												"value": "@item().DataSourceName",
 												"type": "Expression"
 											}
 										}
@@ -207,7 +207,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "@concat('SELECT DISTINCT [LoadBatchGroup] FROM [ctrl].[SourceToBronze] WHERE [IsActive] = 1 AND [LoadBatchGroup] = 1 AND [DataSourceName] = ','''',pipeline().parameters.DataSourceName,'''')",
+									"value": "SELECT DISTINCT [LoadBatchGroup] FROM [ctrl].[SourceToBronze]\nWHERE [IsActive] = 1 AND [DataSourceName] = '@{pipeline().parameters.DataSourceName}'",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",

@@ -1,5 +1,5 @@
 {
-	"name": "PL_CONTROL_SourceToBronze",
+	"name": "02 PL_CONTROL_SourceToBronze",
 	"properties": {
 		"activities": [
 			{
@@ -28,7 +28,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "PL_COPY_SourceToBronze",
+									"referenceName": "03 PL_COPY_SourceToBronze",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -81,6 +81,9 @@
 			"DataSourceName": {
 				"type": "string"
 			}
+		},
+		"folder": {
+			"name": "01 Individual Solution"
 		},
 		"annotations": []
 	}

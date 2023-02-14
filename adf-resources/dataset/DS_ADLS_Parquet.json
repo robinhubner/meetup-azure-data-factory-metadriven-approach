@@ -16,6 +16,9 @@
 				"type": "string"
 			}
 		},
+		"folder": {
+			"name": "01 Individual Solution"
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {

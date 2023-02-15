@@ -1,0 +1,19 @@
+{
+	"name": "MetadataDrivenCopyTask_9bh_ControlDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ASQL_Control",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "MetadataDrivenCopyTask_9bh_20230215"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "ctrl",
+			"table": "MainControlTable_9bh"
+		}
+	}
+}
